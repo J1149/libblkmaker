@@ -44,13 +44,11 @@ size_t blkmk_address_to_script(void *out, size_t outsz, const char *addr) {
 	if (!b58tobin(addrbin, &rv, addr, b58sz))
 		return 0;
 	addrver = b58check(addrbin, sizeof(addrbin), addr, b58sz);
-	printf("addrver %c\n", addrver);
 	switch (addrver) {
 		case   0:  // Bitcoin pubkey hash
+		case 111:  // Testnet pubkey hash
 		case  56:  // Paicoin mainnet pubkey hash
 		case  51:  // Paicoin testnet pubkey hash
-		case 180:  // Oben Paicoin testnet pubkey hash
-		case 111:  // Testnet pubkey hash
 			if (outsz < (rv = 25))
 				return rv;
 			cout[ 0] = 0x76;  // OP_DUP
@@ -62,6 +60,8 @@ size_t blkmk_address_to_script(void *out, size_t outsz, const char *addr) {
 			return rv;
 		case   5:  // Bitcoin script hash
 		case 196:  // Testnet script hash
+		case 130:  // Paicoin script mainnet hash
+		case 180:  // Paicoin script testnet hash
 			if (outsz < (rv = 23))
 				return rv;
 			cout[ 0] = 0xa9;  // OP_HASH160
